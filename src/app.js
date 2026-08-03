@@ -2,37 +2,31 @@ const express = require("express");
 
 const app = express();
 
-app.use(
+//GET /user => middlware => request handlers
+
+app.use("/", (req, res, next) => {
+  //Middleware
+  console.log("Handling / route");
+  next();
+  // res.send("Response from / route")
+});
+
+app.get(
   "/user",
-  [
-    (req, res, next) => {
-      console.log("Route handler 1");
-      // res.send("Response!")
-      next();
-    },
-    (req, res, next) => {
-      console.log("Route handler 2");
-      next();
-      //res.send("Response 2")
-    },
-  ],
   (req, res, next) => {
-    console.log("Route handler 3");
-    //res.send("Response 3")
+    console.log("Handling /user route");
+    //res.send("Response from /user route")
     next();
   },
-  [
-    (req, res, next) => {
-      console.log("Route handler 4");
-      //res.send("Response 4")
-      next();
-    },
-    (req, res, next) => {
-      console.log("Route handler 5");
-      res.send("Response 5");
-      //next()
-    },
-  ],
+  (req, res, next) => {
+    console.log("Response 2");
+    //res.send("Response 2")
+    next();
+  },
+  (req, res, next) => {
+    console.log("Response 3");
+    res.send("Response 3");
+  },
 );
 
 app.listen(3000, () => {
