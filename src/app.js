@@ -1,47 +1,28 @@
 const express = require("express");
 
 const app = express();
-const { adminAuth, userAuth } = require("../middleware/auth");
 
-app.use("/admin", adminAuth);
+app.use("/", (err, req, res, next)=>{
+   res.status(500).send("Something went wrong!!")
+})
 
-//checking auth using middleware
-app.get("/admin/getAllData", (req, res) => {
-  res.send("All the Data");
-});
+app.get("/getAllData", (req, res)=>{
+    try{
+        throw new Error("jhdsgf")
+        res.send("All Data")
+    }catch(err){
+        res.status(500).send("Something went wrong")
+    }
+})
 
-app.delete("/admin/deleteUser", (req, res) => {
-  res.send("Deleted a user");
-});
+// app.get("/getAllData", (req, res)=>{
+//     throw new Error("dhsgf")
+//     res.send("All Data")
+// })
 
-//User Data with auth and without auth
-app.get("/user/getAllUser", userAuth, (req, res) => {
-  res.send("All User Data");
-});
-
-app.get("/user/login", (req, res) => {
-  res.send("Login successfully");
-});
-
-//Authentication is done individually
-// app.use("/admin/getAllData", (req, res) => {
-//   const token = "xyzuu";
-//   const isAdminAuthorized = token === "xyz";
-//   if (isAdminAuthorized) {
-//     res.send("All Data send");
-//   } else {
-//     res.status(401).send("Unauthorized Request!");
-//   }
-// });
-
-// app.get("/admin/deleteUser",(req, res)=>{
-//      const token = "xyz";
-//   const isAdminAuthorized = token === "xyz";
-//   if (isAdminAuthorized) {
-//     res.send("User Deleted");
-//   } else {
-//     res.status(401).send("Unauthorized Request!");
-//   }
+//wildcard error handling
+// app.use("/", (err, req, res, next)=>{
+//     res.status(500).send("Something went wrong!!")
 // })
 
 app.listen(3000, () => {
