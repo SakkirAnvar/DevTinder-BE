@@ -1,30 +1,15 @@
 const express = require("express");
+const connectDB = require("../config/database");
 
 const app = express();
 
-app.use("/", (err, req, res, next)=>{
-   res.status(500).send("Something went wrong!!")
-})
-
-app.get("/getAllData", (req, res)=>{
-    try{
-        throw new Error("jhdsgf")
-        res.send("All Data")
-    }catch(err){
-        res.status(500).send("Something went wrong")
-    }
-})
-
-// app.get("/getAllData", (req, res)=>{
-//     throw new Error("dhsgf")
-//     res.send("All Data")
-// })
-
-//wildcard error handling
-// app.use("/", (err, req, res, next)=>{
-//     res.status(500).send("Something went wrong!!")
-// })
-
-app.listen(3000, () => {
-  console.log("Server is successfully listening on PORT 3000");
-});
+connectDB()
+  .then(() => {
+    console.log("Database Connection Established Successfully....");
+    app.listen(3000, () => {
+      console.log("Server is successfully listening on PORT 3000");
+    });
+  })
+  .catch((err) => {
+    console.error("Database Connection Unsuccessfull....", err);
+  });

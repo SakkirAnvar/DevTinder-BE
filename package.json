@@ -4,11 +4,12 @@
   "description": "Tinder for Developers",
   "main": "index.js",
   "scripts": {
-    "dev":"nodemon src/app.js"
+    "dev": "nodemon src/app.js"
   },
   "author": "Sakkir Anvar",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.9.1"
   }
 }
