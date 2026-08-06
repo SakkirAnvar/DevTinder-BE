@@ -6,6 +6,8 @@ const app = express();
 
 app.use(express.json())
 
+
+//signup API
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
 
@@ -16,6 +18,39 @@ app.post("/signup", async (req, res) => {
     res.starus(500).send("Failed to add user", err);
   }
 });
+
+//find one API /user
+app.get("/user", async (req, res)=>{
+  const userEmail = req.body.emailId
+  console.log(userEmail);
+  
+  const user = await User.findOne({emailId: userEmail})
+  try{
+    if(!user){
+      res.status(404).send("User not found!")
+    }else{
+      res.send(user)
+    }
+  }catch(err){
+    res.send("Something went wrong")
+  }
+})
+
+
+// find all users - /feed
+app.get("/feed", async (req, res)=>{
+  const userEmail = req.body.emailId
+  const user = await User.find({emailId: userEmail})
+  try{
+    if(!user){
+      res.status(404).send("User not found!")
+    }else{
+      res.send(user)
+    }
+  }catch(err){
+    res.send("Something went wrong")
+  }
+})
 
 connectDB()
   .then(() => {
