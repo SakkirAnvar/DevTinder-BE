@@ -36,6 +36,17 @@ app.get("/user", async (req, res)=>{
   }
 })
 
+//delete the user /user
+app.delete("/user", async (req, res)=>{
+  const userId = req.body.userId
+  try{
+    const user = await User.findByIdAndDelete(userId)
+    res.send("User deleted Successfully")
+  }catch(err){
+    res.status(400).send("Something went wrong")
+  }
+})
+
 
 // find all users - /feed
 app.get("/feed", async (req, res)=>{
