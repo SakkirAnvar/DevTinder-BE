@@ -1,7 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
-const { validateSignupData } = require("./utils/validation");
+const { validateSignupData, validateLoginData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 
 const app = express();
@@ -35,6 +35,7 @@ app.post("/signup", async (req, res) => {
 //login API
 app.post("/login", async (req, res) => {
   try {
+    validateLoginData(req);
     const { emailId, password } = req.body;
 
     const user = await User.findOne({ emailId: emailId });
