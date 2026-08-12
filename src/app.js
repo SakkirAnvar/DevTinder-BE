@@ -4,11 +4,12 @@ const User = require("./models/user");
 const { validateSignupData, validateLoginData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 //signup API
 app.post("/signup", async (req, res) => {
@@ -47,7 +48,11 @@ app.post("/login", async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
-      res.cookie("token", "dsfgkjdfhgjkfdhgjdrs");
+      //jwt
+      const token = await jwt.sign({ _id: user._id }, "DEVTinder$9090");
+
+      //cookie
+      res.cookie("token", token);
 
       res.send("Login Successfull!");
     } else {
@@ -59,12 +64,23 @@ app.post("/login", async (req, res) => {
 });
 
 // /profile
-app.get("/profile", async (req, res)=>{
-  const cookies = req.cookies
-  console.log(cookies);
-  
-  res.send("Reading cookie")
-})
+app.get("/profile", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    const { token } = cookies;
+
+    const decodedMessage = await jwt.verify(token, "DEVTinder$9090");
+    const { _id } = decodedMessage;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
 
 //find one API /user
 app.get("/user", async (req, res) => {
