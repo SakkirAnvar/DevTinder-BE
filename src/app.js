@@ -3,10 +3,12 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignupData, validateLoginData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser())
 
 //signup API
 app.post("/signup", async (req, res) => {
@@ -45,6 +47,8 @@ app.post("/login", async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+      res.cookie("token", "dsfgkjdfhgjkfdhgjdrs");
+
       res.send("Login Successfull!");
     } else {
       throw new Error("Invalid Credentials");
@@ -53,6 +57,14 @@ app.post("/login", async (req, res) => {
     res.status(400).send("ERROR : " + err.message);
   }
 });
+
+// /profile
+app.get("/profile", async (req, res)=>{
+  const cookies = req.cookies
+  console.log(cookies);
+  
+  res.send("Reading cookie")
+})
 
 //find one API /user
 app.get("/user", async (req, res) => {
