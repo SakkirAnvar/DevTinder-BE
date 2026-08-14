@@ -50,7 +50,7 @@ app.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
       //jwt
-      const token = await jwt.sign({ _id: user._id }, "DEVTinder$9090");
+      const token = await jwt.sign({ _id: user._id }, "DEVTinder$9090", { expiresIn: "1d" });
 
       //cookie
       res.cookie("token", token);
