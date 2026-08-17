@@ -30,8 +30,29 @@ const validateEditProfileData = (req) =>{
 
 }
 
+const validateForgotPassword = async (req) =>{
+  const user = req.user
+
+  const {currentPassword, updatedPassword} = req.body
+
+  const isPasswordValid = await user.validatePassword(currentPassword)
+
+
+  if(!isPasswordValid){
+    throw new Error("Invalid current password..")
+    
+  }else if(!validator.isStrongPassword(updatedPassword)){
+    throw new Error("Enter a strong new password..")
+  }
+  
+
+  
+}
+
+
 module.exports = {
   validateSignupData,
   validateLoginData,
   validateEditProfileData,
+  validateForgotPassword,
 };
