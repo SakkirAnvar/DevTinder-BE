@@ -33,7 +33,7 @@ const validateEditProfileData = (req) =>{
 const validateForgotPassword = async (req) =>{
   const user = req.user
 
-  const {currentPassword, updatedPassword} = req.body
+  const {currentPassword, updatePassword} = req.body
 
   const isPasswordValid = await user.validatePassword(currentPassword)
 
@@ -41,7 +41,7 @@ const validateForgotPassword = async (req) =>{
   if(!isPasswordValid){
     throw new Error("Invalid current password..")
     
-  }else if(!validator.isStrongPassword(updatedPassword)){
+  }else if(!validator.isStrongPassword(updatePassword)){
     throw new Error("Enter a strong new password..")
   }
   

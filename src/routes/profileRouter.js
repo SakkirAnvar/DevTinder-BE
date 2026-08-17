@@ -38,8 +38,8 @@ profileRouter.patch("/profile/password", userAuth, async(req,res)=>{
   try{
    await validateForgotPassword(req)
     const loggedInUser = req.user
-    const {updatedPassword } = req.body
-    const newPasswordHash = await bcrypt.hash(updatedPassword, 10)
+    const {updatePassword } = req.body
+    const newPasswordHash = await bcrypt.hash(updatePassword, 10)
 
     loggedInUser.password = newPasswordHash
 
