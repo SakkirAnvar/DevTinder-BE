@@ -1,6 +1,6 @@
-const express = require('express');
-const userRouter = express.Router()
-const User = require("../models/user")
+const express = require("express");
+const userRouter = express.Router();
+const User = require("../models/user");
 
 //find one API /user
 userRouter.get("/user", async (req, res) => {

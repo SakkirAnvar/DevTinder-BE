@@ -1,10 +1,10 @@
-const express = require("express")
-const authRouter = express.Router()
-const {validateSignupData} = require("../utils/validation")
-const {validateLoginData} = require("../utils/validation")
-const bcrypt = require("bcrypt")
-const User = require("../models/user")
-const { userAuth } = require("../middlewares/auth")
+const express = require("express");
+const authRouter = express.Router();
+const { validateSignupData } = require("../utils/validation");
+const { validateLoginData } = require("../utils/validation");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const { userAuth } = require("../middlewares/auth");
 
 //signup API
 authRouter.post("/signup", async (req, res) => {
@@ -59,9 +59,9 @@ authRouter.post("/login", async (req, res) => {
 });
 
 //logout API
-authRouter.post("/logout", async (req, res) =>{
-  res.cookie("token", null, expires = new Date(Date.now()))
-  res.send("Logout Successfull")
-})
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, (expires = new Date(Date.now())));
+  res.send("Logout Successfull");
+});
 
 module.exports = authRouter;

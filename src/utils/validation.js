@@ -1,5 +1,5 @@
 const validator = require("validator");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 
 const validateSignupData = (req) => {
   const { firstName, lastName, emailId, password } = req.body;
@@ -21,34 +21,38 @@ const validateLoginData = (req) => {
   }
 };
 
-const validateEditProfileData = (req) =>{
-  const allowedEditFields = ["firstName", "lastName", "emailId", "age", "gender", 'skills', "about", "photoUrl"];
+const validateEditProfileData = (req) => {
+  const allowedEditFields = [
+    "firstName",
+    "lastName",
+    "emailId",
+    "age",
+    "gender",
+    "skills",
+    "about",
+    "photoUrl",
+  ];
 
-  const isEditAllowed = Object.keys(req.body).every((field)=> allowedEditFields.includes(field))
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    allowedEditFields.includes(field),
+  );
 
-  return isEditAllowed
+  return isEditAllowed;
+};
 
-}
+const validateForgotPassword = async (req) => {
+  const user = req.user;
 
-const validateForgotPassword = async (req) =>{
-  const user = req.user
+  const { currentPassword, updatePassword } = req.body;
 
-  const {currentPassword, updatePassword} = req.body
+  const isPasswordValid = await user.validatePassword(currentPassword);
 
-  const isPasswordValid = await user.validatePassword(currentPassword)
-
-
-  if(!isPasswordValid){
-    throw new Error("Invalid current password..")
-    
-  }else if(!validator.isStrongPassword(updatePassword)){
-    throw new Error("Enter a strong new password..")
+  if (!isPasswordValid) {
+    throw new Error("Invalid current password..");
+  } else if (!validator.isStrongPassword(updatePassword)) {
+    throw new Error("Enter a strong new password..");
   }
-  
-
-  
-}
-
+};
 
 module.exports = {
   validateSignupData,
