@@ -1,6 +1,30 @@
 const express = require("express");
 const userRouter = express.Router();
 const User = require("../models/user");
+const {userAuth} = require("../middlewares/auth")
+const connectionRequest = require("../models/connectionRequest")
+
+//GET all the pending connection request of loggedInUser
+userRouter.get("/user/requests/pending", userAuth, async (req, res)=>{
+  try{
+    const loggedInUser = req.user
+
+    const connectionRequests = await connectionRequest.find({
+      fromUserId : loggedInUser._id,
+      status:"interested"
+    }).populate("fromUserId", "firstName lastName age gender skills photoUrl")
+    if(connectionRequests.length === 0){
+      return res.json({message:"No Connection Requests Found!"})
+    }
+
+    res.json({message:"Connection Request Data Successfully fetched", connectionRequests})
+
+    
+
+  }catch(err){
+    res.status(400).send("ERROR : "+ err.message)
+  }
+})
 
 //find one API /user
 userRouter.get("/user", async (req, res) => {
