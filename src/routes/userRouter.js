@@ -2,7 +2,7 @@ const express = require("express");
 const userRouter = express.Router();
 const User = require("../models/user");
 const {userAuth} = require("../middlewares/auth")
-const ConnectionRequest = require("../models/connectionRequest")
+const ConnectionRequest = require("../models/connectionRequest");
 
 const USER_SAFE_DATA = "firstName lastName age gender skills photoUrl"
 
@@ -53,6 +53,41 @@ userRouter.get("/user/connections", userAuth, async(req, res)=>{
   }
 })
 
+// find all users except connectionRequest and self profile - /user/feed
+userRouter.get("/user/feed", userAuth, async (req, res) => {
+  try{
+    const loggedInUser = req.user
+
+    const connectionRequests = await ConnectionRequest.find({
+      $or:[
+        {fromUserId:loggedInUser._id}, {toUserId:loggedInUser._id}
+      ]
+    }).select("fromUserId toUserId")
+
+    const hideUsersFromFeed = new Set()
+    connectionRequests.forEach((req)=>{
+      hideUsersFromFeed.add(req.fromUserId.toString(),
+      hideUsersFromFeed.add(req.toUserId.toString())
+    )
+    })
+
+    const users = await User.find({
+      $and:[
+        {_id : {$nin: Array.from(hideUsersFromFeed)}},
+        {_id: {$ne: loggedInUser._id}}
+      ]
+    }).select(USER_SAFE_DATA)
+
+
+    
+
+    res.send(users)
+  }catch(err){
+    res.status(400).send("ERROR : "+ err.message)
+  }
+});
+
+
 //find one API /user
 userRouter.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
@@ -78,21 +113,6 @@ userRouter.delete("/user", async (req, res) => {
     res.send("User deleted Successfully");
   } catch (err) {
     res.status(400).send("Something went wrong");
-  }
-});
-
-// find all users - /feed
-userRouter.get("/feed", async (req, res) => {
-  const userEmail = req.body.emailId;
-  const user = await User.find({ emailId: userEmail });
-  try {
-    if (!user) {
-      res.status(404).send("User not found!");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    res.send("Something went wrong");
   }
 });
 
