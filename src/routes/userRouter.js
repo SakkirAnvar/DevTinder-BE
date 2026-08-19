@@ -2,17 +2,19 @@ const express = require("express");
 const userRouter = express.Router();
 const User = require("../models/user");
 const {userAuth} = require("../middlewares/auth")
-const connectionRequest = require("../models/connectionRequest")
+const ConnectionRequest = require("../models/connectionRequest")
+
+const USER_SAFE_DATA = "firstName lastName age gender skills photoUrl"
 
 //GET all the pending connection request of loggedInUser
-userRouter.get("/user/requests/pending", userAuth, async (req, res)=>{
+userRouter.get("/user/requests/received", userAuth, async (req, res)=>{
   try{
     const loggedInUser = req.user
 
-    const connectionRequests = await connectionRequest.find({
-      fromUserId : loggedInUser._id,
+    const connectionRequests = await ConnectionRequest.find({
+      toUserId: loggedInUser._id,
       status:"interested"
-    }).populate("fromUserId", "firstName lastName age gender skills photoUrl")
+    }).populate("fromUserId", USER_SAFE_DATA)
     if(connectionRequests.length === 0){
       return res.json({message:"No Connection Requests Found!"})
     }
@@ -23,6 +25,31 @@ userRouter.get("/user/requests/pending", userAuth, async (req, res)=>{
 
   }catch(err){
     res.status(400).send("ERROR : "+ err.message)
+  }
+})
+
+//GET the connection list of accepted status
+userRouter.get("/user/connections", userAuth, async(req, res)=>{
+  try{
+    const loggedInUser = req.user
+
+    const connectionRequests = await ConnectionRequest.find({
+      $or:[
+        {toUserId: loggedInUser._id, status:"accepted"},
+        {fromUserId:loggedInUser._id, status:"accepted"}
+      ]
+    }).populate("fromUserId", USER_SAFE_DATA).populate("toUserId", USER_SAFE_DATA)
+
+    const data = connectionRequests.map((row)=>{
+      if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
+        return row.toUserId
+      }
+      return row.fromUserId
+    })
+
+    res.json({data})
+  }catch(err){
+    res.status(400).send("ERROR : "+err.message)
   }
 })
 
