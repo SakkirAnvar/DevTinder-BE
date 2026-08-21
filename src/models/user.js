@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { type } = require("express/lib/response");
 
 const userSchema = new mongoose.Schema(
   {
@@ -34,6 +35,10 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
+    },
+    photoUrl:{
+      type:String,
+      default:"https://e7.pngegg.com/pngimages/340/946/png-clipart-avatar-user-computer-icons-software-developer-avatar-child-face-thumbnail.png"
     },
     gender: {
       type: String,
